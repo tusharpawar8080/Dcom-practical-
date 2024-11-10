@@ -1,0 +1,45 @@
+M = 16;                % Modulation order (16-PSk)
+num_symbol = 1000;     % Number of symbols
+data = randi([0 M-1], num_symbol, 1);  % Generate random data symbols
+txSig = pskmod(data, M);  % PSk Modulation
+
+% Scatter plot of transmitted signal
+scatterplot(txSig);
+title('PSK Scatter Plot');
+
+%if you have this code show output step by step.
+
+
+%for further erase above code and paste below code.
+
+% Add noise to the signal
+rxSig = awgn(txSig, 20);  % Add noise with SNR of 20 dB
+
+% Scatter plot of noisy received signal
+scatterplot(rxSig);
+title('Noisy PSk Scatter Plot');% Add noise to the signal
+
+%for further erase above code and paste below code.
+
+
+snr =[]
+BER_sim=[]
+ber_therotical=[]
+for i = 1:1:50
+    snr(i)=i
+    EbNo = 10^(i/10);
+    rxSig = awgn(txSig,EbNo);
+    BER_sim(i)= (biterr(int16(abs(txSig)) , int16(abs(rxSig))))/num_symbol;
+    ber_therotical(i) = erfc(sqrt(EbNo*((sin(pi/M))^2)))
+    
+end 
+
+plot (snr,BER_sim)
+
+%for further erase above code and paste below code.
+
+plot (snr,ber_therotical)
+legend('BER_sim',ber_therotical')
+
+
+%%(same as QAM but change is only qam=psk & QAM=PSK and formula for therotical to be changed)
