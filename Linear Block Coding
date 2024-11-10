@@ -1,0 +1,82 @@
+%LINEAR BLOCK CODE
+clc;
+clear all;
+close all;
+%%
+% Transmitter end
+in=input('Enter the (n,k)linear block code value: ');
+n=in(1);
+k=in(2);
+p=n-k;
+id=eye(k);
+disp('Identity matrix')
+disp(id)
+temp=[ones(1,k-1) zeros(k-length(ones(1,k-1)))];
+parity=[temp;];
+
+for i=1:n-k-1
+    temp1=temp(k);
+    for j=k:-1:2
+        temp(j)=temp(j-1);
+    end
+    temp(1)=temp1;
+    parity=[parity;temp];
+end
+parity=parity';
+disp('Parity matrix')
+disp(parity)
+generator=[parity id];
+disp('Generator matrix at transmitter end')
+disp(generator)
+data=0:power(2,k)-1;
+data=dec2bin(data)-48;
+disp('Valid data words')
+disp(data)
+%channel code = dataword * generator matrix
+tcode=[];
+for i=1:length(data)
+    tcode=[tcode;mod(data(i,:)*generator,2)];
+end
+disp('Valid codewords ready for transmission')
+disp(tcode)
+%%
+% Reciever end
+rcode=input('Enter a recieved codeword: ');
+check=[eye(p) parity'];
+disp('Parity check matrix')
+disp(check)
+check=check';
+disp('Transpose of Parity check matrix')
+disp(check)
+syn=mod(rcode*check,2);
+disp('Syndrome vector in received codeword')
+disp(syn)
+if syn == 0
+    disp('The recieved codeword has no error in it');
+    validcode=rcode;
+else
+    pos=0;
+    for m=1:length(check)
+        if(syn(1,:)==check(m,:))
+            pos=m;
+        end
+    end
+    zero=zeros(1,n);
+    zero(pos)=~zero(pos);
+    errorpat=zero;
+    disp('Error pattern possible in recieved codeword')
+    disp(errorpat);
+    validcode=xor(rcode,errorpat);
+    fprintf('The valid code word after detecting error at position %d and correcting it.\n',pos);
+    disp(validcode)
+end
+%decoding data word from recieved codeword
+disp('Decoded data from recieved codeword');
+disp(validcode((n-k+1):n));
+
+
+
+%(use octave prepare procedure if the another example is asked)
+%1.once your code run it shows enter the value of (n,k) so Enter [7 4]
+%2.then it shows to enter received codeword enter this 7 bit codeword in square bracket[] (asked mam once what to enter)
+%3.if the error is in the code it solve and show correct codeword.
