@@ -1,0 +1,53 @@
+import numpy
+import matplotlib.pyplot as plt
+import statistics
+
+random_numbers = numpy.random.normal(1,50,100)
+x=random_numbers
+mean = statistics.mean(random_numbers)
+print(mean)
+
+plt.plot(x)
+plt.ylabel('random sample value')
+plt.axhline(y=numpy.nanmean(mean),color='red',linestyle='--',label='Avg')
+plt.show()
+
+variance = statistics.variance(random_numbers)
+print(variance)
+
+std_deviation = numpy.std(random_numbers)
+print(std_deviation)
+
+plt.plot(x)
+plt.ylabel('random sample value')
+plt.axhline(y=numpy.nanmean(mean),color='red',linestyle='--',label='Avg')
+plt.axhline(y=numpy.nanmean(std_deviation),color='yellow',linestyle='--',label='Sd')
+plt.show()
+
+plt.xlabel(' random sample value')
+plt.hist(random_numbers)
+plt.show()
+
+import statsmodels.api as sm
+from statsmodels.graphics import tsaplots
+auto_corr =sm.tsa.acf(random_numbers,nlags=10)
+print(auto_corr)
+fig =tsaplots.plot_acf(random_numbers,lags=10)
+plt.show()
+
+random_numbers2 = numpy.random.normal(0,50,100)
+cross_corr = sm.tsa.stattools.ccf(random_numbers,random_numbers2)
+
+plt.plot(cross_corr)
+plt.ylabel('random sample2 value')
+plt.show()
+ensemble = random_numbers+random_numbers2
+ensemble_average = ensemble/len(ensemble)
+plt.plot(ensemble_average)
+
+plt.hist(ensemble_average)
+
+
+
+%(for practical use google colab save this code in octave online for code only .
+prepare questions for each and every plot )
