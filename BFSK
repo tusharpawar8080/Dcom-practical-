@@ -1,0 +1,50 @@
+clc;
+clear all;
+close all;
+
+N = 8; % Number of bits
+Bit_stream = round(rand(1, N)); % Generate random bit stream
+fs = 100; % Sampling frequency
+t = 0 : (1 / fs) : 1; % Time vector for 1 second duration
+fm = 1; % Message frequency
+fcl = 1; % Frequency for binary '0'
+fc2 = 4; % Frequency for binary '1'
+
+datastream = []; % Initialize datastream
+time = []; % Initialize time array
+carrier_signal1 = []; % Initialize carrier for '0'
+carrier_signal2 = []; % Initialize carrier for '1'
+fsk_signal = []; % Initialize FSK signal
+for i = 1:length(Bit_stream)
+    % Generate data stream
+    datastream = [datastream ((Bit_stream(i) == 0) * zeros(1, length(t)) + (Bit_stream(i) == 1) * ones(1, length(t)))];
+    
+    % Generate carrier signals
+    carrier_signal1 = [carrier_signal1 sin(2 * pi * fcl * t)];
+    carrier_signal2 = [carrier_signal2 sin(2 * pi * fc2 * t)];
+    
+    % Generate FSK signal
+    fsk_signal = [fsk_signal ((Bit_stream(i) == 0) * sin(2 * pi * fcl * t) + (Bit_stream(i) == 1) * sin(2 * pi * fc2 * t))];
+    
+    % Update time array
+    time = [time t + (i - 1)];
+end
+
+% Plotting
+subplot(4, 1, 1);
+plot(time, datastream);
+axis([0 time(end) -1.5 1.5]);
+title('Data Stream');
+subplot(4, 1, 2);
+plot(time, carrier_signal1);
+title('Carrier Signal for 0');
+
+subplot(4, 1, 3);
+plot(time, carrier_signal2);
+title('Carrier Signal for 1');
+
+subplot(4, 1, 4);
+plot(time, fsk_signal);
+title('FSK Signal')
+         
+%(use octave online for this code )
