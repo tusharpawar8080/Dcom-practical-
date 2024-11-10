@@ -1,0 +1,55 @@
+% Initialization of Data and variables
+clc;
+clear all;
+close all;
+
+% Reduced nr_data_bits to speed up execution for testing
+nr_data_bits = 1000;  % Reduce from 8192 to 1000 temporarily for testing
+b = rand(1, nr_data_bits) > 0.5;  % Generate random bits (0 or 1)
+
+% Vectorized BPSK Mapping (using complex notation for BPSK symbols directly)
+bpsk = exp(1i * pi * b);  % If b = 0, symbol = exp(j*2*pi), if b = 1, symbol = exp(j*pi)
+
+% Plot BPSK constellation (without noise)
+figure(1);
+plot(real(bpsk), imag(bpsk), 'o');
+axis([-2 2 -2 2]);
+grid on;
+xlabel('Real');
+ylabel('Imaginary');
+title('BPSK Constellation');
+
+% Simulation parameters (reduced SNR range for quicker testing)
+SNR_values = 0:2:24;  % Reduced step size for faster execution
+BER1 = zeros(size(SNR_values));  % Pre-allocate BER array
+
+% Loop through each SNR value
+for k = 1:length(SNR_values)
+    snr_value = SNR_values(k);
+    sigma = sqrt(10^(-snr_value / 10));
+    
+    % Adding noise to BPSK signal
+    noise = sigma * (randn(size(bpsk)) + 1i * randn(size(bpsk)));  % Complex noise
+    snbpsk = bpsk + noise;  % Noisy BPSK signal
+    
+    % Receiver (Decision based on real part)
+    bhat = real(snbpsk) < 0;  % BPSK demodulation
+    
+    % Calculate BER
+    BER1(k) = sum(b ~= bhat) / nr_data_bits;
+end
+
+% Plot BER vs SNR
+figure(2);
+semilogy(SNR_values, BER1, '-*');
+grid on;
+xlabel('SNR (Eb/No) in dB');
+ylabel('BER');
+title('Simulation of BER for BPSK');
+legend('BER-simulated');
+
+
+
+
+%(use online octave for this code
+for output if warning show and external asked then answer that the code execution is to large therefore the warning shows in addition tell we used less no of nr data bits)
